@@ -4,13 +4,12 @@ import java.sql.*;
 
 public class PhoneBookDataBase {
     private final Connection connection;
-    private final Statement statement;
 
     public PhoneBookDataBase(String dbName) {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbName);
-            statement = connection.createStatement();
-            statement.execute("CREATE TABLE IF NOT EXISTS phone_book (id INT PRIMARY KEY, name TEXT, phone_number INT)");
+            Statement statement = connection.createStatement();
+            statement.execute("CREATE TABLE IF NOT EXISTS phone_book (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, phone_number INT)");
         } catch (SQLException e) {
             throw new RuntimeException("Can't create database");
         }
@@ -27,18 +26,8 @@ public class PhoneBookDataBase {
         }
     }
 
-    public static void showContact(ResultSet resultSet) {
-        try {
-            while (resultSet.next()) {
-                System.out.println("id" + resultSet.getInt("id") + "Ім'я: " + resultSet.getString("name")
-                        + ", номер телефону: " + resultSet.getInt("phone_number"));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Can't show contacts");
-        }
-    }
 
-    public ResultSet searchContactDefault() {
+    public ResultSet showContact() {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM phone_book");
             return preparedStatement.executeQuery();

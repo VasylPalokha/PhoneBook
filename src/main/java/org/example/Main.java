@@ -2,10 +2,12 @@ package org.example;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        int CHOICE;
         Scanner scanner = new Scanner(System.in);
         try {
             PhoneBookDataBase dataBase = new PhoneBookDataBase("phone_book.db");
@@ -17,10 +19,15 @@ public class Main {
                 System.out.println("4. Видаленя контакту");
                 System.out.println("5. Редагування контакту");
                 System.out.println("6. Зберегти та вийти");
-                int choice = scanner.nextInt();
-                scanner.nextLine();
 
-                switch (choice) {
+                try {
+                    CHOICE = scanner.nextInt();
+                    scanner.nextLine();
+                } catch (InputMismatchException e) {
+                    throw new RuntimeException("Invalid input value");
+                }
+
+                switch (CHOICE) {
                     case 1:
                         System.out.println("Введіть ім'я: ");
                         String name = scanner.nextLine();
@@ -30,13 +37,13 @@ public class Main {
                         System.out.println("Контакт додано");
                         break;
                     case 2:
-                        ResultSet resultSet1 = dataBase.searchContactDefault();
+                        ResultSet resultSet1 = dataBase.showContact();
                         while (resultSet1.next()) {
                             System.out.println(
                                     "ID: " + resultSet1.getInt("id") + "\n" +
                                             "Ім'я: " + resultSet1.getString("name") + "\n" +
                                             "Номер телефону: "
-                                    + resultSet1.getString("phone_number"));
+                                            + resultSet1.getString("phone_number"));
                         }
                         break;
                     case 3:
@@ -68,6 +75,7 @@ public class Main {
                     default:
                         System.out.println("Неправильний вибір. Спробуйте ще раз.");
                 }
+
             }
 
         } catch (SQLException e) {
